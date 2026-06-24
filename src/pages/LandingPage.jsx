@@ -1,10 +1,9 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import heroSpices from '../assets/landingpage/3.png';
-import featureQuality from '../assets/landingpage/123.jpg';
-import featureShopping from '../assets/landingpage/5.png';
+import featureQuality from '../assets/logo.png';
+import featureShopping from '../assets/logo.png';
 import featureFast from '../assets/logo.png';
 
 export const LandingPage = () => {
@@ -44,13 +43,20 @@ export const LandingPage = () => {
       </div>
 
       {/* Features */}
-      <div className="px-4 py-16 sm:px-6 lg:px-8 bg-primary-900 text-white">
-            <div className="max-w-5xl mx-auto">
+      <div
+        className="px-4 py-16 sm:px-6 lg:px-8 bg-primary-800 text-white"
+        style={{
+          backgroundImage: `url(${heroSpices})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+        }}
+      >
+        <div className="max-w-5xl mx-auto bg-primary-800/50 p-6 rounded-lg">
           <h3 className="text-3xl font-bold text-center mb-12 text-white ">Why Choose us?</h3>
           
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Feature 1 */}
-            <div className="bg-primary-800 rounded-lg p-6 shadow-lg text-white">
+            <div className="bg-primary-900 rounded-lg p-6 shadow-lg text-white">
               <img src={featureQuality} alt="Premium Quality" className="w-24 h-24 mx-auto mb-4 rounded-lg" />
               <h4 className="text-xl font-bold mb-2 text-center">Premium Quality</h4>
               <p className="text-white text-center">
@@ -59,7 +65,7 @@ export const LandingPage = () => {
             </div>
 
             {/* Feature 2 */}
-            <div className="bg-primary-800 rounded-lg p-6 shadow-lg text-white">
+            <div className="bg-primary-900 rounded-lg p-6 shadow-lg text-white">
               <img src={featureShopping} alt="Easy Shopping" className="w-24 h-24 mx-auto mb-4 rounded-lg" />
               <h4 className="text-xl font-bold mb-2 text-center">Easy Shopping</h4>
               <p className="text-white text-center">
@@ -68,7 +74,7 @@ export const LandingPage = () => {
             </div>
 
             {/* Feature 3 */}
-            <div className="bg-primary-800 rounded-lg p-6 shadow-lg text-white">
+            <div className="bg-primary-900 rounded-lg p-6 shadow-lg text-white">
               <img src={featureFast} alt="Fast Service" className="w-24 h-24 mx-auto mb-4 rounded-lg" />
               <h4 className="text-xl font-bold mb-2 text-center">Fast Service</h4>
               <p className="text-white text-center">
@@ -86,8 +92,8 @@ export const LandingPage = () => {
           <p className="text-lg mb-8 text-white">
             Join thousands of flavor enthusiasts enjoying Uncle K's products.
           </p>
-          <Link to="/register" className="inline-block px-8 py-3 bg-white text-primary-900 font-bold rounded-lg hover:bg-gray-100 transition">
-            Create Your Account Now
+          <Link to="/store" className="inline-block px-8 py-3 bg-white text-primary-900 font-bold rounded-lg hover:bg-accent-light transition">
+            Visit Store
           </Link>
         </div>
       </div>
