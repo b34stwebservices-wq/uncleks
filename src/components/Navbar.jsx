@@ -55,10 +55,10 @@ export const Navbar = ({ showCart = false, onCartClick }) => {
             ) : (
               <>
                 <Link to="/login" className="hover:text-accent-light transition">
-                  Sign In
+                  Login
                 </Link>
                 <Link to="/register" className="px-3 py-1 rounded-md bg-white text-primary-900 font-medium hover:bg-gray-100 transition">
-                  Sign Up
+                  Register
                 </Link>
               </>
             )}
@@ -140,16 +140,23 @@ export const Navbar = ({ showCart = false, onCartClick }) => {
                     className="block py-2 hover:text-accent-light transition"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Sign In
+                    Login
                   </Link>
 
                   <Link
                     to="/register"
-                    className="block py-2 rounded-md bg-white text-primary-900 font-medium hover:bg-gray-100 transition px-3"
+                    className="block py-2 hover:text-accent-light transition"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Sign Up
+                    Register
                   </Link>
+                  <Link
+                      to="/store"
+                      className="block py-2 hover:text-accent-light transition"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Store
+                    </Link>
                 </>
               )}
             </div>

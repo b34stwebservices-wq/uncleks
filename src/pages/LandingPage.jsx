@@ -6,6 +6,7 @@ import featureQuality from '../assets/logo.png';
 import featureShopping from '../assets/logo.png';
 import featureFast from '../assets/logo.png';
 import logo from '../assets/logo.png';
+import feature from '../assets/landingpage/3.png';
 
 export const LandingPage = () => {
   return (
@@ -47,7 +48,7 @@ export const LandingPage = () => {
       <div
         className="px-4 py-16 sm:px-6 lg:px-8 bg-primary-800 text-white"
         style={{
-          backgroundImage: `url(${heroSpices})`,
+          backgroundImage: `url(${feature})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
@@ -100,7 +101,7 @@ export const LandingPage = () => {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-primary-500 px-4 py-8 sm:px-6 lg:px-8 bg-primary-700 text-white">
+      <footer className="border-t border-primary-500 px-4 py-8 sm:px-6 lg:px-8 bg-primary-800 text-white">
         <div className="max-w-5xl mx-auto text-center">
           <img src={logo} alt="Uncle K's Logo" className="h-16 w-16 mx-auto mb-4" />
           <p>Uncle K's - Proudly Zambian</p>
