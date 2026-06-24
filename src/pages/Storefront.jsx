@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { db } from '../config/firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { ShoppingCart } from 'lucide-react';
@@ -14,25 +14,38 @@ export const Storefront = ({ onShowCart }) => {
   const { addToCart } = useCart();
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    let isMounted = true;
 
-  const fetchProducts = async () => {
-    try {
-      const productsQuery = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
-      const productsSnap = await getDocs(productsQuery);
-      const productsData = productsSnap.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setProducts(productsData);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      setError(error.message || 'Error fetching products');
-    } finally {
-      setLoading(false);
-    }
-  };
+    const fetchProducts = async () => {
+      try {
+        const productsQuery = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
+        const productsSnap = await getDocs(productsQuery);
+        const productsData = productsSnap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        if (isMounted) {
+          setProducts(productsData);
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+        if (isMounted) {
+          setError(error.message || 'Error fetching products');
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchProducts();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   if (loading) return <LoadingSpinner />;
 
@@ -44,8 +57,10 @@ export const Storefront = ({ onShowCart }) => {
         <ErrorAlert message={error} onDismiss={() => setError('')} />
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-primary-900">🌶️ Uncle K's Store</h1>
-          <p className="text-gray-600 mt-1">Bold flavor from Zambia. Fresh, premium products.</p>
+          <h1 className="text-3xl font-bold text-primary-900 text-center">Uncle K's Store</h1>
+          <p className="text-gray-600 mt-1 text-center">
+            Bold flavor from Zambia. Fresh, premium products.
+          </p>
         </div>
 
         {/* Products Grid - Mobile First */}
