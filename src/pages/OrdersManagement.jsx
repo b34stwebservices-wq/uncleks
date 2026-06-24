@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { db } from '../config/firebase';
 import { collection, getDocs, doc, updateDoc, query, orderBy } from 'firebase/firestore';
-import { TrendingDown, TrendingUp, CheckCircle } from 'lucide-react';
+import { TrendingDown, CheckCircle } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { SuccessAlert } from '../components/SuccessAlert';
@@ -14,11 +14,7 @@ export const OrdersManagement = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [filter, setFilter] = useState('all');
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       const ordersQuery = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
       const ordersSnap = await getDocs(ordersQuery);
@@ -33,7 +29,15 @@ export const OrdersManagement = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const loadOrders = async () => {
+      await fetchOrders();
+    };
+
+    loadOrders();
+  }, [fetchOrders]);
 
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
