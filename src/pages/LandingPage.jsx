@@ -5,6 +5,7 @@ import heroSpices from '../assets/landingpage/3.png';
 import featureQuality from '../assets/logo.png';
 import featureShopping from '../assets/logo.png';
 import featureFast from '../assets/logo.png';
+import logo from '../assets/logo.png';
 
 export const LandingPage = () => {
   return (
@@ -51,7 +52,7 @@ export const LandingPage = () => {
           backgroundPosition: 'center',
         }}
       >
-        <div className="max-w-5xl mx-auto bg-primary-800/50 p-6 rounded-lg">
+        <div className="max-w-5xl mx-auto bg-primary-800/90 p-6 rounded-lg">
           <h3 className="text-3xl font-bold text-center mb-12 text-white ">Why Choose us?</h3>
           
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -101,8 +102,9 @@ export const LandingPage = () => {
       {/* Footer */}
       <footer className="border-t border-primary-500 px-4 py-8 sm:px-6 lg:px-8 bg-primary-700 text-white">
         <div className="max-w-5xl mx-auto text-center">
+          <img src={logo} alt="Uncle K's Logo" className="h-16 w-16 mx-auto mb-4" />
           <p>Uncle K's - Proudly Zambian</p>
-          <div className="mt-4 flex flex-col sm:flex-row justify-center gap-4">
+          <div className="mt-4 flex justify-center gap-4">
             <a href="https://www.instagram.com/uncleks" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-white hover:text-gray-200">
               <Instagram className="h-5 w-5" />
             </a>
