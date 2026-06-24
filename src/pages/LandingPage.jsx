@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingCart, Package, Zap } from 'lucide-react';
+import { Facebook, Instagram, Twitter } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import heroSpices from '../assets/landingpage/3.png';
 import featureQuality from '../assets/landingpage/123.jpg';
@@ -44,34 +44,34 @@ export const LandingPage = () => {
       </div>
 
       {/* Features */}
-      <div className="px-4 py-16 sm:px-6 lg:px-8 bg-gray-50">
+      <div className="px-4 py-16 sm:px-6 lg:px-8 bg-primary-900 text-white">
             <div className="max-w-5xl mx-auto">
-          <h3 className="text-3xl font-bold text-center mb-12 text-primary-900">Why Choose Uncle K's?</h3>
+          <h3 className="text-3xl font-bold text-center mb-12 text-white ">Why Choose us?</h3>
           
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Feature 1 */}
-            <div className="bg-primary-500 rounded-lg p-6 shadow-lg text-white">
+            <div className="bg-primary-800 rounded-lg p-6 shadow-lg text-white">
               <img src={featureQuality} alt="Premium Quality" className="w-24 h-24 mx-auto mb-4 rounded-lg" />
               <h4 className="text-xl font-bold mb-2 text-center">Premium Quality</h4>
-              <p className="text-gray-100 text-center">
+              <p className="text-white text-center">
                 Handpicked ingredients sourced from the finest producers in Zambia and beyond.
               </p>
             </div>
 
             {/* Feature 2 */}
-            <div className="bg-primary-500 rounded-lg p-6 shadow-lg text-white">
+            <div className="bg-primary-800 rounded-lg p-6 shadow-lg text-white">
               <img src={featureShopping} alt="Easy Shopping" className="w-24 h-24 mx-auto mb-4 rounded-lg" />
               <h4 className="text-xl font-bold mb-2 text-center">Easy Shopping</h4>
-              <p className="text-gray-100 text-center">
+              <p className="text-white text-center">
                 Mobile-first platform designed for seamless browsing, ordering, and checkout.
               </p>
             </div>
 
             {/* Feature 3 */}
-            <div className="bg-primary-500 rounded-lg p-6 shadow-lg text-white">
+            <div className="bg-primary-800 rounded-lg p-6 shadow-lg text-white">
               <img src={featureFast} alt="Fast Service" className="w-24 h-24 mx-auto mb-4 rounded-lg" />
               <h4 className="text-xl font-bold mb-2 text-center">Fast Service</h4>
-              <p className="text-gray-100 text-center">
+              <p className="text-white text-center">
                 Quick order processing and reliable delivery to bring flavor to your table fast.
               </p>
             </div>
@@ -93,9 +93,20 @@ export const LandingPage = () => {
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-300 px-4 py-8 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="max-w-5xl mx-auto text-center text-gray-600">
-          <p>🌶️ Uncle K's - Bold Flavor from Zambia | Proudly Zambian</p>
+      <footer className="border-t border-primary-500 px-4 py-8 sm:px-6 lg:px-8 bg-primary-700 text-white">
+        <div className="max-w-5xl mx-auto text-center">
+          <p>Uncle K's - Proudly Zambian</p>
+          <div className="mt-4 flex flex-col sm:flex-row justify-center gap-4">
+            <a href="https://www.instagram.com/uncleks" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-white hover:text-gray-200">
+              <Instagram className="h-5 w-5" />
+            </a>
+            <a href="https://www.facebook.com/uncleks" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-white hover:text-gray-200">
+              <Facebook className="h-5 w-5" />
+            </a>
+            <a href="https://www.tiktok.com/@uncleks" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-white hover:text-gray-200">
+              <Twitter className="h-5 w-5" />
+            </a>
+          </div>
           <p className="text-sm mt-2">© 2026 Uncle K's. All rights reserved.</p>
         </div>
       </footer>
