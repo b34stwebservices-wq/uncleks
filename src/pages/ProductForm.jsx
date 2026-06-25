@@ -8,6 +8,7 @@ import Navbar from '../components/Navbar';
 import { logAuditEvent } from '../services/auditService';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { SuccessAlert } from '../components/SuccessAlert';
+import { parseProductPrice } from '../utils/productValidation';
 
 export const ProductForm = () => {
   const navigate = useNavigate();
@@ -123,8 +124,8 @@ export const ProductForm = () => {
       return;
     }
 
-    const price = parseFloat(formData.price);
-    if (!Number.isFinite(price) || price <= 0) {
+    const price = parseProductPrice(formData.price);
+    if (!price) {
       setErrorMsg('Please enter a valid price greater than 0');
       return;
     }

@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import Navbar from '../components/Navbar';
 import { getErrorMessage, validateEmail } from '../utils/helpers';
+import { getPostLoginPath } from '../utils/accountFlow';
 import logo from '../assets/logo.png';
 
 export const LoginPage = () => {
@@ -31,7 +32,7 @@ export const LoginPage = () => {
 
     try {
       const { role } = await login(email, password);
-      navigate(role === 'admin' ? '/dashboard' : '/store');
+      navigate(getPostLoginPath(role));
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {

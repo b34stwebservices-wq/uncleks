@@ -23,10 +23,12 @@ export const getUsers = async () => {
 };
 
 export const createUserDoc = async (userData) => {
-  const newDocRef = doc(usersCollection);
+  const authUid = userData.authUid.trim();
+  const newDocRef = doc(usersCollection, authUid);
   const now = serverTimestamp();
   await setDoc(newDocRef, {
-    ...userData,
+    email: userData.email,
+    displayName: userData.displayName || '',
     role: userData.role || 'customer',
     createdAt: now,
     updatedAt: now,

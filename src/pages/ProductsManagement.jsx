@@ -16,6 +16,7 @@ import { logAuditEvent } from '../services/auditService';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { SuccessAlert } from '../components/SuccessAlert';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 
 export const ProductsManagement = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ export const ProductsManagement = () => {
   const [loading, setLoading] = useState(true);
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const [productToDelete, setProductToDelete] = useState(null);
 
   const fetchProducts = async () => {
     try {
@@ -49,27 +51,29 @@ export const ProductsManagement = () => {
     void loadProducts();
   }, []);
 
-  const handleDelete = async (productId) => {
-    if (!window.confirm('Are you sure you want to delete this product?')) return;
+  const handleDelete = async () => {
+    if (!productToDelete) return;
 
     try {
       // Delete from Firestore. Cloudinary assets are not deleted from the client-side
       // because that requires server-side credentials or a signed Cloudinary API call.
-      await deleteDoc(doc(db, 'products', productId));
+      await deleteDoc(doc(db, 'products', productToDelete.id));
       setSuccessMsg('Product deleted successfully');
       await logAuditEvent({
         actorId: user?.uid,
         actorEmail: user?.email,
         actionType: 'product.deleted',
         entityType: 'product',
-        entityId: productId,
-        entityName: `Product ${productId.slice(0, 8)}`,
-        details: 'Product deleted from admin panel',
+        entityId: productToDelete.id,
+        entityName: productToDelete.name || `Product ${productToDelete.id.slice(0, 8)}`,
+        details: `Product deleted: ${productToDelete.name || productToDelete.id}`,
       });
       fetchProducts();
     } catch (error) {
       setErrorMsg('Failed to delete product');
       console.error(error);
+    } finally {
+      setProductToDelete(null);
     }
   };
 
@@ -81,6 +85,14 @@ export const ProductsManagement = () => {
 
       <SuccessAlert message={successMsg} onDismiss={() => setSuccessMsg('')} />
       <ErrorAlert message={errorMsg} onDismiss={() => setErrorMsg('')} />
+      <ConfirmDialog
+        isOpen={!!productToDelete}
+        title="Delete product"
+        message={`Delete "${productToDelete?.name || 'this product'}"? This removes the product record from Firestore but does not delete the Cloudinary image.`}
+        confirmLabel="Delete Product"
+        onCancel={() => setProductToDelete(null)}
+        onConfirm={handleDelete}
+      />
 
       <div className="px-4 py-6 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Header */}
@@ -151,7 +163,7 @@ export const ProductsManagement = () => {
                         Edit
                       </button>
                       <button
-                        onClick={() => handleDelete(product.id)}
+                        onClick={() => setProductToDelete(product)}
                         className="flex-1 btn-secondary bg-red-100 text-red-700 hover:bg-red-200 flex items-center justify-center gap-2"
                       >
                         <Trash2 size={18} />

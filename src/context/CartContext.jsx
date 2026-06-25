@@ -1,28 +1,13 @@
 import { useState, useCallback, useEffect } from 'react';
 import { CartContext } from './cartContext';
-
-const loadSavedCart = () => {
-  try {
-    const savedCart = localStorage.getItem('unclek_cart');
-    if (!savedCart) return [];
-
-    return JSON.parse(savedCart);
-  } catch (error) {
-    console.error('Error loading cart:', error);
-    return [];
-  }
-};
+import { loadCartItems, saveCartItems } from '../utils/cartStorage';
 
 export const CartProvider = ({ children }) => {
-  const [items, setItems] = useState(loadSavedCart);
+  const [items, setItems] = useState(loadCartItems);
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
-    try {
-      localStorage.setItem('unclek_cart', JSON.stringify(items));
-    } catch (error) {
-      console.error('Error saving cart:', error);
-    }
+    saveCartItems(items);
   }, [items]);
 
   const addToCart = useCallback((product) => {

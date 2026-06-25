@@ -7,10 +7,12 @@ import { logAuditEvent } from '../services/auditService';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { SuccessAlert } from '../components/SuccessAlert';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import { getUsers, createUserDoc, updateUserDoc, deleteUserDoc } from '../services/userService';
 import { formatDate } from '../utils/helpers';
 
 const initialForm = {
+  authUid: '',
   email: '',
   displayName: '',
   role: 'customer',
@@ -25,6 +27,7 @@ export const UsersManagement = () => {
   const [formData, setFormData] = useState(initialForm);
   const [userUpdates, setUserUpdates] = useState({});
   const [roleUpdates, setRoleUpdates] = useState({});
+  const [userToDelete, setUserToDelete] = useState(null);
 
   const loadUsers = async () => {
     try {
@@ -74,29 +77,34 @@ export const UsersManagement = () => {
     setErrorMsg('');
     setSuccessMsg('');
 
-    if (!formData.email) {
-      setErrorMsg('Email is required to create a user record.');
+    if (!formData.authUid.trim()) {
+      setErrorMsg('Firebase Auth UID is required to create a role record.');
+      return;
+    }
+
+    if (!formData.email.trim()) {
+      setErrorMsg('Email is required to create a role record.');
       return;
     }
 
     try {
       await createUserDoc(formData);
-      setSuccessMsg('User record created successfully.');
+      setSuccessMsg('User role record created successfully.');
       await logAuditEvent({
         actorId: user?.uid,
         actorEmail: user?.email,
         actionType: 'user.record_created',
         entityType: 'user',
-        entityId: formData.email,
+        entityId: formData.authUid.trim(),
         entityName: formData.displayName || formData.email,
-        details: `Firestore user record created for ${formData.email}`,
+        details: `Firestore role record created for ${formData.email}`,
       });
       setFormData(initialForm);
       setLoading(true);
       await loadUsers();
     } catch (error) {
       console.error('Failed to create user record', error);
-      setErrorMsg('Failed to create user record.');
+      setErrorMsg('Failed to create user role record.');
       setLoading(false);
     }
   };
@@ -146,23 +154,21 @@ export const UsersManagement = () => {
     }
   };
 
-  const handleDelete = async (userId) => {
-    if (!window.confirm('Delete this user record? This does not remove a Firebase Auth account.')) {
-      return;
-    }
+  const handleDelete = async () => {
+    if (!userToDelete) return;
 
     setErrorMsg('');
     setSuccessMsg('');
     try {
-      await deleteUserDoc(userId);
+      await deleteUserDoc(userToDelete.id);
       setSuccessMsg('User record deleted successfully.');
       await logAuditEvent({
         actorId: user?.uid,
         actorEmail: user?.email,
         actionType: 'user.record_deleted',
         entityType: 'user',
-        entityId: userId,
-        entityName: users.find((u) => u.id === userId)?.displayName || userId,
+        entityId: userToDelete.id,
+        entityName: userToDelete.displayName || userToDelete.email || userToDelete.id,
         details: 'User record removed from Firestore',
       });
       setLoading(true);
@@ -171,6 +177,8 @@ export const UsersManagement = () => {
       console.error('Failed to delete user record', error);
       setErrorMsg('Failed to delete user record.');
       setLoading(false);
+    } finally {
+      setUserToDelete(null);
     }
   };
 
@@ -191,6 +199,14 @@ export const UsersManagement = () => {
 
       <SuccessAlert message={successMsg} onDismiss={() => setSuccessMsg('')} />
       <ErrorAlert message={errorMsg} onDismiss={() => setErrorMsg('')} />
+      <ConfirmDialog
+        isOpen={!!userToDelete}
+        title="Delete user role record"
+        message={`Delete the Firestore role record for ${userToDelete?.email || userToDelete?.id || 'this user'}? This does not remove the Firebase Auth account.`}
+        confirmLabel="Delete Record"
+        onCancel={() => setUserToDelete(null)}
+        onConfirm={handleDelete}
+      />
 
       <div className="px-4 py-6 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
@@ -209,11 +225,23 @@ export const UsersManagement = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           <div className="card p-6 bg-white shadow-sm rounded-3xl">
-            <h2 className="text-xl font-semibold text-gray-900 mb-3">Create User Record</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-3">Create Auth User Role Record</h2>
             <p className="text-sm text-gray-600 mb-4">
-              This creates a Firestore user record only. It does not create a Firebase Auth sign-in account.
+              Use the Firebase Auth UID for an existing sign-in account. This creates or replaces the Firestore role record read during login.
             </p>
             <form onSubmit={handleCreate} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Firebase Auth UID</label>
+                <input
+                  type="text"
+                  name="authUid"
+                  value={formData.authUid}
+                  onChange={handleInputChange}
+                  placeholder="Paste existing Auth user UID"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 text-base"
+                  required
+                />
+              </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                 <input
@@ -250,7 +278,7 @@ export const UsersManagement = () => {
                 </select>
               </div>
               <button type="submit" className="btn-primary w-full">
-                Create Record
+                Save Role Record
               </button>
             </form>
           </div>
@@ -304,7 +332,7 @@ export const UsersManagement = () => {
                           Save
                         </button>
                         <button
-                          onClick={() => handleDelete(user.id)}
+                          onClick={() => setUserToDelete(user)}
                           className="btn-secondary bg-red-100 text-red-700 hover:bg-red-200"
                         >
                           Delete

@@ -8,6 +8,7 @@ import { logAuditEvent } from '../services/auditService';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { SuccessAlert } from '../components/SuccessAlert';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 
 export const OrdersManagement = () => {
   const { user } = useAuth();
@@ -16,6 +17,7 @@ export const OrdersManagement = () => {
   const [successMsg, setSuccessMsg] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
   const [filter, setFilter] = useState('all');
+  const [orderToDelete, setOrderToDelete] = useState(null);
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -64,25 +66,27 @@ export const OrdersManagement = () => {
     }
   };
 
-  const deleteOrder = async (orderId) => {
-    if (!window.confirm('Delete this order? This action cannot be undone.')) return;
+  const deleteOrder = async () => {
+    if (!orderToDelete) return;
 
     try {
-      await deleteDoc(doc(db, 'orders', orderId));
+      await deleteDoc(doc(db, 'orders', orderToDelete.id));
       setSuccessMsg('Order deleted successfully');
       await logAuditEvent({
         actorId: user?.uid,
         actorEmail: user?.email,
         actionType: 'order.deleted',
         entityType: 'order',
-        entityId: orderId,
-        entityName: `Order ${orderId.slice(0, 8)}`,
-        details: 'Order deleted by admin',
+        entityId: orderToDelete.id,
+        entityName: `Order ${orderToDelete.id.slice(0, 8)}`,
+        details: `Order deleted for ${orderToDelete.customer || 'unknown customer'}`,
       });
       fetchOrders();
     } catch (error) {
       setErrorMsg('Failed to delete order');
       console.error(error);
+    } finally {
+      setOrderToDelete(null);
     }
   };
 
@@ -106,6 +110,14 @@ export const OrdersManagement = () => {
 
       <SuccessAlert message={successMsg} onDismiss={() => setSuccessMsg('')} />
       <ErrorAlert message={errorMsg} onDismiss={() => setErrorMsg('')} />
+      <ConfirmDialog
+        isOpen={!!orderToDelete}
+        title="Delete order"
+        message={`Delete order #${orderToDelete?.id?.slice(0, 8) || ''} for ${orderToDelete?.customer || 'this customer'}? This action cannot be undone.`}
+        confirmLabel="Delete Order"
+        onCancel={() => setOrderToDelete(null)}
+        onConfirm={deleteOrder}
+      />
 
       <div className="px-4 py-6 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Header */}
@@ -203,7 +215,7 @@ export const OrdersManagement = () => {
                     </button>
                   )}
                   <button
-                    onClick={() => deleteOrder(order.id)}
+                    onClick={() => setOrderToDelete(order)}
                     className="flex-1 btn-secondary bg-red-100 text-red-700 hover:bg-red-200 flex items-center justify-center gap-2"
                   >
                     <Trash2 size={18} />
