@@ -104,6 +104,13 @@ export const OrdersManagement = () => {
     return 'bg-red-100 text-red-700';
   };
 
+  const getTotalQuantity = (order) => {
+    return order.items?.reduce(
+      (sum, item) => sum + (item.quantity || 1),
+      0
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -159,7 +166,7 @@ export const OrdersManagement = () => {
                       Order #{order.id.slice(0, 8)}
                     </h3>
                     <p className="text-sm text-gray-600">
-                      {order.customer} • {order.items?.length || 0} items
+                      {order.customer} 
                     </p>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-sm font-semibold w-fit ${statusBadgeClass(order.status)}`}>
@@ -169,8 +176,15 @@ export const OrdersManagement = () => {
 
                 {/* Order Items */}
                 <div className="mb-4">
-                  <p className="text-sm font-semibold text-gray-700 mb-2">Items:</p>
                   <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                        <span className="text-sm font-semibold text-gray-700 mb-2">
+                          Items:
+                        </span>
+                        <span className="text-sm font-semibold text-gray-700 mb-2">
+                          {getTotalQuantity(order)}
+                        </span>
+                      </div>
                     {order.items?.map((item, idx) => (
                       <div key={idx} className="flex justify-between text-sm">
                         <span className="text-gray-600">

@@ -58,6 +58,13 @@ const OrderHistory = () => {
     return <LoadingSpinner />;
   }
 
+  const getTotalQuantity = (order) => {
+    return order.items?.reduce(
+      (sum, item) => sum + (item.quantity || 1),
+      0
+    );
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar showCart={true} onCartClick={() => navigate('/store')} />
@@ -107,7 +114,7 @@ const OrderHistory = () => {
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Items</p>
-                    <p className="font-medium text-gray-900">{order.items?.length || 0}</p>
+                    <p className="font-medium text-gray-900">{getTotalQuantity(order)}</p>
                   </div>
                   <div>
                     <p className="text-sm text-gray-500">Total</p>
