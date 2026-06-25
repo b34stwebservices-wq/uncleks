@@ -94,7 +94,7 @@ export const Navbar = ({ showCart = false, onCartClick }) => {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden btn-icon p-2 text-white"
+              className="md:hidden btn-icon p-2 text-white  hover:bg-primary-800"
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
