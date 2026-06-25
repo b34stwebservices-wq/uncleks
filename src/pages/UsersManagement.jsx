@@ -293,51 +293,57 @@ export const UsersManagement = () => {
                   <div key={user.id} className="border border-gray-200 rounded-3xl p-4">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                       <div>
-                        <p className="font-semibold text-gray-900">{user.email || 'No email'}</p>
-                        <p className="text-sm text-gray-600">
-                          {user.displayName || 'No display name'}
-                        </p>
-                        <p className="text-sm text-gray-500 mt-1">
-                          Created: {formatDate(user.createdAt)}
-                        </p>
+                        <div>
+                          <p className="font-semibold text-gray-900">{user.email || 'No email'}</p>
+                          <p className="text-sm text-gray-600">
+                            {user.displayName || 'No display name'}
+                          </p>
+                          <p className="text-sm text-gray-500 mt-1">
+                            Created: {formatDate(user.createdAt)}
+                          </p>
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                          <input
+                            type="text"
+                            value={userUpdates[user.id]?.displayName || ''}
+                            onChange={(e) => handleUserChange(user.id, 'displayName', e.target.value)}
+                            placeholder="Display Name"
+                            className="px-4 py-2 border border-gray-300 rounded-lg w-full"
+                          />
+
+                          <input
+                            type="email"
+                            value={userUpdates[user.id]?.email || ''}
+                            onChange={(e) => handleUserChange(user.id, 'email', e.target.value)}
+                            placeholder="Email"
+                            className="px-4 py-2 border border-gray-300 rounded-lg w-full"
+                          />
+
+                          <select
+                            value={roleUpdates[user.id] || 'customer'}
+                            onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                            className="px-4 py-2 border border-gray-300 rounded-lg w-full"
+                          >
+                            <option value="pending">Pending</option>
+                            <option value="customer">Customer</option>
+                            <option value="admin">Admin</option>
+                          </select>
+                        </div>
+
+                        <div className="flex gap-2 mt-3 flex-wrap">
+                          <button onClick={() => handleSaveUser(user.id)} className="btn-secondary">
+                            Save
+                          </button>
+
+                          <button
+                            onClick={() => setUserToDelete(user)}
+                            className="btn-secondary bg-red-100 text-red-700 hover:bg-red-200"
+                          >
+                            Delete
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                        <input
-                          type="text"
-                          value={userUpdates[user.id]?.displayName || ''}
-                          onChange={(e) => handleUserChange(user.id, 'displayName', e.target.value)}
-                          placeholder="Display Name"
-                          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 text-base"
-                        />
-                        <input
-                          type="email"
-                          value={userUpdates[user.id]?.email || ''}
-                          onChange={(e) => handleUserChange(user.id, 'email', e.target.value)}
-                          placeholder="Email"
-                          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 text-base"
-                        />
-                        <select
-                          value={roleUpdates[user.id] || 'customer'}
-                          onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                          className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 text-base"
-                        >
-                          <option value="pending">Pending</option>
-                          <option value="customer">Customer</option>
-                          <option value="admin">Admin</option>
-                        </select>
-                        <button
-                          onClick={() => handleSaveUser(user.id)}
-                          className="btn-secondary"
-                        >
-                          Save
-                        </button>
-                        <button
-                          onClick={() => setUserToDelete(user)}
-                          className="btn-secondary bg-red-100 text-red-700 hover:bg-red-200"
-                        >
-                          Delete
-                        </button>
-                      </div>
+                      
                     </div>
                   </div>
                 ))}
