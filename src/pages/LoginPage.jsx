@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { ErrorAlert } from '../components/ErrorAlert';
 import Navbar from '../components/Navbar';
-import logo from '../assets/logo.png'
+import { getErrorMessage, validateEmail } from '../utils/helpers';
+import logo from '../assets/logo.png';
 
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -16,13 +16,24 @@ export const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (!email || !password) {
+      setError('Please enter both email and password.');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError('Please enter a valid email address.');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await login(email, password);
+      const result = await login(email, password);
       navigate('/store');
     } catch (err) {
-      setError(err.message || 'Failed to login');
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -33,8 +44,6 @@ export const LoginPage = () => {
       <Navbar showCart={false} />
 
       <div className="min-h-screen bg-primary-900 flex items-center justify-center px-4 py-8">
-        <ErrorAlert message={error} onDismiss={() => setError('')} />
-        
         <div className="w-full max-w-md">
           {/* Brand Logo */}
           <div className="text-center mb-8">
@@ -42,10 +51,16 @@ export const LoginPage = () => {
           </div>
 
           {/* Login Card */}
-          <div className="card p-6 space-y-6">
+          <div className="card p-6 space-y-6 bg-white shadow-xl rounded-3xl">
             <div>
               <h2 className="text-2xl font-bold text-primary-900 text-center">Welcome Back</h2>
             </div>
+
+            {error && (
+              <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+                {error}
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Email Field */}

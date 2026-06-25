@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { db } from '../config/firebase';
 import { doc, collection, getDoc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { ArrowLeft, Upload } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import { logAuditEvent } from '../services/auditService';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { SuccessAlert } from '../components/SuccessAlert';
 
 export const ProductForm = () => {
   const navigate = useNavigate();
   const { productId } = useParams();
+  const { user } = useAuth();
   const isEdit = !!productId;
 
   const [formData, setFormData] = useState({
@@ -142,12 +145,30 @@ export const ProductForm = () => {
         // Update existing product
         await updateDoc(doc(db, 'products', productId), productData);
         setSuccessMsg('Product updated successfully');
+        void logAuditEvent({
+          actorId: user?.uid,
+          actorEmail: user?.email,
+          actionType: 'product.updated',
+          entityType: 'product',
+          entityId: productId,
+          entityName: formData.name,
+          details: `Product updated: ${formData.name}`,
+        }).catch((auditError) => console.error('Failed to log audit event:', auditError));
       } else {
         // Create new product
         productData.createdAt = serverTimestamp();
         const newDocRef = doc(collection(db, 'products'));
         await setDoc(newDocRef, productData);
         setSuccessMsg('Product created successfully');
+        void logAuditEvent({
+          actorId: user?.uid,
+          actorEmail: user?.email,
+          actionType: 'product.created',
+          entityType: 'product',
+          entityId: newDocRef.id,
+          entityName: formData.name,
+          details: `Product created: ${formData.name}`,
+        }).catch((auditError) => console.error('Failed to log audit event:', auditError));
       }
 
       setTimeout(() => {

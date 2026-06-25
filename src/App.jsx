@@ -12,8 +12,12 @@ import AdminDashboard from './pages/AdminDashboard';
 import ProductsManagement from './pages/ProductsManagement';
 import ProductForm from './pages/ProductForm';
 import OrdersManagement from './pages/OrdersManagement';
+import UsersManagement from './pages/UsersManagement';
+import AuditTrail from './pages/AuditTrail';
+import PendingApprovalPage from './pages/PendingApprovalPage';
 import Storefront from './pages/Storefront';
 import CheckoutPage from './pages/CheckoutPage';
+import OrderHistory from './pages/OrderHistory';
 import NotFoundPage from './pages/NotFoundPage';
 
 // Components
@@ -80,6 +84,26 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/users"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <UsersManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/audit-log"
+              element={
+                <ProtectedRoute requireAdmin={true}>
+                  <AuditTrail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/pending"
+              element={<PendingApprovalPage />}
+            />
 
             {/* Customer Routes */}
             <Route path="/store" element={<Storefront onShowCart={() => setCartOpen(true)} />} />
@@ -88,6 +112,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <CheckoutPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/my-orders"
+              element={
+                <ProtectedRoute>
+                  <OrderHistory />
                 </ProtectedRoute>
               }
             />

@@ -4,6 +4,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
+  updateProfile,
 } from 'firebase/auth';
 import { auth, db } from '../config/firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
@@ -21,17 +22,23 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
       if (authUser) {
-        setUser(authUser);
         // Get user role from Firestore
         try {
           const userDoc = await getDoc(doc(db, 'users', authUser.uid));
-          if (userDoc.exists()) {
-            setUserRole(userDoc.data().role || 'customer');
+          const role = userDoc.exists() ? userDoc.data().role || 'customer' : 'customer';
+
+          if (role === 'pending') {
+            // Keep pending users signed in so they can see the approval page,
+            // while ProtectedRoute prevents access to normal customer/admin pages.
+            setUser(authUser);
+            setUserRole('pending');
           } else {
-            setUserRole('customer');
+            setUser(authUser);
+            setUserRole(role);
           }
         } catch (err) {
           console.error('Error fetching user role:', err);
+          setUser(authUser);
           setUserRole('customer');
         }
       } else {
@@ -44,21 +51,33 @@ export const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  const register = useCallback(async (email, password, isAdmin = false) => {
+  const register = useCallback(async (email, password, fullName) => {
     setError(null);
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const normalizedEmail = email.trim();
+      const cleanedFullName = fullName?.trim() || '';
+
+      const userCredential = await createUserWithEmailAndPassword(auth, normalizedEmail, password);
       const newUser = userCredential.user;
 
-      // Store user data in Firestore
+      if (cleanedFullName) {
+        await updateProfile(newUser, { displayName: cleanedFullName });
+      }
+
+      // Store user data in Firestore with pending approval
       await setDoc(doc(db, 'users', newUser.uid), {
         email: newUser.email,
-        role: isAdmin ? 'admin' : 'customer',
+        displayName: cleanedFullName || '',
+        role: 'pending',
         createdAt: new Date(),
       });
 
-      setUserRole(isAdmin ? 'admin' : 'customer');
-      return newUser;
+      // Sign out the pending user - they cannot log in until approved
+      await signOut(auth);
+      setUser(null);
+      setUserRole(null);
+      
+      return { uid: newUser.uid, email: newUser.email };
     } catch (err) {
       console.error('Register error:', err);
       setError(getErrorMessage(err));
@@ -74,13 +93,15 @@ export const AuthProvider = ({ children }) => {
 
       // Get user role
       const userDoc = await getDoc(doc(db, 'users', authUser.uid));
-      if (userDoc.exists()) {
-        setUserRole(userDoc.data().role || 'customer');
-      } else {
-        setUserRole('customer');
+      const role = userDoc.exists() ? userDoc.data().role || 'customer' : 'customer';
+
+      if (role === 'pending') {
+        await signOut(auth);
+        throw new Error('pending-approval');
       }
 
-      return authUser;
+      setUserRole(role);
+      return { authUser, role };
     } catch (err) {
       console.error('Login error:', err);
       setError(getErrorMessage(err));

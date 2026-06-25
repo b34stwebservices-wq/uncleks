@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { db } from '../config/firebase';
 import { collection, query, getDocs, orderBy } from 'firebase/firestore';
-import { BarChart3, Package, ShoppingBag } from 'lucide-react';
+import { BarChart3, Package, ShoppingBag, Users } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 
@@ -11,6 +11,7 @@ export const AdminDashboard = () => {
   const [stats, setStats] = useState({
     products: 0,
     orders: 0,
+    users: 0,
     totalRevenue: 0,
   });
   const [recentOrders, setRecentOrders] = useState([]);
@@ -29,6 +30,11 @@ export const AdminDashboard = () => {
         const ordersSnap = await getDocs(ordersQuery);
         const ordersCount = ordersSnap.size;
 
+        // Fetch users count
+        const usersQuery = query(collection(db, 'users'));
+        const usersSnap = await getDocs(usersQuery);
+        const usersCount = usersSnap.size;
+
         // Calculate total revenue
         let totalRevenue = 0;
         const ordersData = [];
@@ -41,6 +47,7 @@ export const AdminDashboard = () => {
         setStats({
           products: productsCount,
           orders: ordersCount,
+          users: usersCount,
           totalRevenue: totalRevenue.toFixed(2),
         });
 
@@ -104,6 +111,23 @@ export const AdminDashboard = () => {
             </Link>
           </div>
 
+          {/* Users Card */}
+          <div className="card p-6">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">User Records</p>
+                <p className="text-3xl font-bold text-primary-900 mt-2">{stats.users}</p>
+              </div>
+              <Users className="text-primary-900 w-8 h-8 opacity-20" />
+            </div>
+            <Link
+              to="/users"
+              className="text-primary-900 text-sm font-semibold hover:underline mt-4 inline-block"
+            >
+              Manage Users →
+            </Link>
+          </div>
+
           {/* Revenue Card */}
           <div className="card p-6">
             <div className="flex items-start justify-between">
@@ -121,7 +145,7 @@ export const AdminDashboard = () => {
         {/* Quick Actions */}
         <div className="mb-8 space-y-3">
           <h2 className="text-lg font-bold text-gray-900">Quick Actions</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <button
               onClick={() => navigate('/products/new')}
               className="btn-primary"
@@ -133,6 +157,18 @@ export const AdminDashboard = () => {
               className="btn-secondary"
             >
               View All Orders
+            </button>
+            <button
+              onClick={() => navigate('/users')}
+              className="btn-secondary"
+            >
+              Manage User Records
+            </button>
+            <button
+              onClick={() => navigate('/audit-log')}
+              className="btn-secondary"
+            >
+              Audit Trail
             </button>
           </div>
         </div>

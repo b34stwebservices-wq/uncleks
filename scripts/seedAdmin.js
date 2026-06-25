@@ -15,11 +15,11 @@ async function loadServiceAccount(filePath) {
 const sampleProducts = [
   {
     id: 'nkubama-vegetable-soup',
-    name: 'Nkubama Vegetable Soup',
+    name: 'Hot Sauce Original Flavor',
     price: 45.0,
     description: 'A rich, comforting vegetable soup made with fresh local greens and traditional spices.',
     image:
-      'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80',
+      'https://res.cloudinary.com/dkgmkegyq/image/upload/v1782218348/products/bfn7ohdzokkdkpke8ozb.png',
   },
   {
     id: 'chikanda-spice-mix',
@@ -27,7 +27,7 @@ const sampleProducts = [
     price: 28.0,
     description: 'Authentic Zambian spice blend for making chikanda and savory stews.',
     image:
-      'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?auto=format&fit=crop&w=900&q=80',
+      'https://res.cloudinary.com/dkgmkegyq/image/upload/v1782218420/products/moiyx2dgxvg1cdcxu8y5.png',
   },
   {
     id: 'cassava-flour',
@@ -35,7 +35,7 @@ const sampleProducts = [
     price: 32.5,
     description: 'Finely milled cassava flour for thick porridge, baking, and traditional dishes.',
     image:
-      'https://images.unsplash.com/photo-1582452361407-eca4e1c0d5b6?auto=format&fit=crop&w=900&q=80',
+      'https://res.cloudinary.com/dkgmkegyq/image/upload/v1782218496/products/ynxyd2vyr1k5c25anfb3.png',
   },
   {
     id: 'mealie-meal-pack',
@@ -43,7 +43,7 @@ const sampleProducts = [
     price: 19.99,
     description: 'High-quality mealie meal made from freshly ground maize for nshima and more.',
     image:
-      'https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?auto=format&fit=crop&w=900&q=80',
+      'https://res.cloudinary.com/dkgmkegyq/image/upload/v1782218844/products/rmrhtrpclgwehklng2gf.png',
   },
   {
     id: 'ntetu-cooking-oil',
@@ -51,7 +51,7 @@ const sampleProducts = [
     price: 25.0,
     description: 'Pure cooking oil with a smooth taste ideal for frying, sautéing, and baking.',
     image:
-      'https://images.unsplash.com/photo-1529270290299-8e6c4f71a8f4?auto=format&fit=crop&w=900&q=80',
+      'https://res.cloudinary.com/dkgmkegyq/image/upload/v1782218671/products/rpb0rxmh90zlauchd69c.png',
   },
 ];
 

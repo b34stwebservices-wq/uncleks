@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import { db } from '../config/firebase';
 import {
   collection,
@@ -11,12 +12,14 @@ import {
 } from 'firebase/firestore';
 import { Edit2, Trash2, Plus, Package } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import { logAuditEvent } from '../services/auditService';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { SuccessAlert } from '../components/SuccessAlert';
 import { ErrorAlert } from '../components/ErrorAlert';
 
 export const ProductsManagement = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [successMsg, setSuccessMsg] = useState('');
@@ -54,6 +57,15 @@ export const ProductsManagement = () => {
       // because that requires server-side credentials or a signed Cloudinary API call.
       await deleteDoc(doc(db, 'products', productId));
       setSuccessMsg('Product deleted successfully');
+      await logAuditEvent({
+        actorId: user?.uid,
+        actorEmail: user?.email,
+        actionType: 'product.deleted',
+        entityType: 'product',
+        entityId: productId,
+        entityName: `Product ${productId.slice(0, 8)}`,
+        details: 'Product deleted from admin panel',
+      });
       fetchProducts();
     } catch (error) {
       setErrorMsg('Failed to delete product');

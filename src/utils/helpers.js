@@ -62,7 +62,8 @@ export const getStatusColor = (status) => {
 
 // Get status badge text
 export const getStatusLabel = (status) => {
-  return status?.charAt(0).toUpperCase() + status?.slice(1) || 'Unknown';
+  if (!status) return 'Unknown';
+  return status.charAt(0).toUpperCase() + status.slice(1);
 };
 
 // Round to 2 decimal places
@@ -119,22 +120,52 @@ export const storage = {
 
 // API error handler
 export const getErrorMessage = (error) => {
-  if (error.message) return error.message;
-  if (error.code) {
-    switch (error.code) {
+  const apiError = error?.error || error;
+  const errorCode = apiError?.code;
+  const errorMessage = apiError?.message || error?.message;
+  const apiReason = apiError?.errors?.[0]?.message;
+
+  if (typeof errorCode === 'string') {
+    switch (errorCode) {
       case 'auth/user-not-found':
-        return 'User not found. Please register first.';
+        return 'No account found with that email.';
       case 'auth/wrong-password':
         return 'Incorrect password.';
+      case 'auth/too-many-requests':
+        return 'Too many attempts. Please try again later.';
       case 'auth/email-already-in-use':
         return 'Email already registered.';
       case 'auth/weak-password':
         return 'Password is too weak. Use at least 6 characters.';
       case 'auth/invalid-email':
         return 'Invalid email address.';
+      case 'auth/invalid-credential':
+        return 'The provided credentials are invalid.';
       default:
-        return 'An error occurred. Please try again.';
+        return errorMessage || 'An error occurred. Please try again.';
     }
+  }
+
+  if (typeof errorCode === 'number' && errorMessage) {
+    if (errorMessage === 'INVALID_LOGIN_CREDENTIALS') {
+      return 'Incorrect email or password.';
+    }
+
+    return errorMessage;
+  }
+
+  if (typeof apiReason === 'string') {
+    if (apiReason === 'INVALID_LOGIN_CREDENTIALS') {
+      return 'Incorrect email or password.';
+    }
+    return apiReason;
+  }
+
+  if (typeof error?.message === 'string') {
+    if (error.message === 'pending-approval') {
+      return 'Your account is pending approval. Please wait for admin confirmation.';
+    }
+    return error.message;
   }
   return 'An unexpected error occurred.';
 };

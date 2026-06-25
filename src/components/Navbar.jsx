@@ -2,11 +2,14 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, LogOut, ShoppingCart } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useCart } from '../context/CartContext';
 import logo from '../assets/logo.png';
 
 export const Navbar = ({ showCart = false, onCartClick }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isAdmin, logout } = useAuth();
+  const { items } = useCart();
+  const cartQuantity = items.reduce((sum, item) => sum + (item.quantity || 1), 0);
 
   const handleLogout = async () => {
     await logout();
@@ -27,6 +30,9 @@ export const Navbar = ({ showCart = false, onCartClick }) => {
           <div className="hidden md:flex items-center gap-6">
             {user ? (
               <>
+                <div className="text-sm text-white/80">
+                  Signed in as <span className="font-semibold text-white">{user.displayName || user.email}</span>
+                </div>
                 {isAdmin ? (
                   <>
                     <Link to="/dashboard" className="hover:text-accent-light transition">
@@ -40,9 +46,14 @@ export const Navbar = ({ showCart = false, onCartClick }) => {
                     </Link>
                   </>
                 ) : (
-                  <Link to="/store" className="hover:text-accent-light transition">
-                    Store
-                  </Link>
+                  <>
+                    <Link to="/store" className="hover:text-accent-light transition">
+                      Store
+                    </Link>
+                    <Link to="/my-orders" className="hover:text-accent-light transition">
+                      My Orders
+                    </Link>
+                  </>
                 )}
 
                 <button
@@ -69,9 +80,14 @@ export const Navbar = ({ showCart = false, onCartClick }) => {
             {!isAdmin && showCart && (
               <button
                 onClick={onCartClick}
-                className="btn-icon p-2 rounded-lg text-white hover:bg-primary-800 transition"
+                className="relative btn-icon p-2 rounded-lg text-white hover:bg-primary-800 transition"
               >
                 <ShoppingCart size={24} />
+                {cartQuantity > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[20px] h-5 rounded-full bg-accent text-xs font-semibold text-white flex items-center justify-center px-1">
+                    {cartQuantity}
+                  </span>
+                )}
               </button>
             )}
 
@@ -91,6 +107,9 @@ export const Navbar = ({ showCart = false, onCartClick }) => {
             <div className="space-y-3">
               {user ? (
                 <> 
+                  <div className="block py-2 text-sm text-white/80">
+                    Signed in as <span className="font-semibold text-white">{user.displayName || user.email}</span>
+                  </div>
                   {isAdmin ? (
                     <>
                       <Link
@@ -116,13 +135,22 @@ export const Navbar = ({ showCart = false, onCartClick }) => {
                       </Link>
                     </>
                   ) : (
-                    <Link
-                      to="/store"
-                      className="block py-2 hover:text-accent-light transition"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Store
-                    </Link>
+                    <>
+                      <Link
+                        to="/store"
+                        className="block py-2 hover:text-accent-light transition"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Store
+                      </Link>
+                      <Link
+                        to="/my-orders"
+                        className="block py-2 hover:text-accent-light transition"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        My Orders
+                      </Link>
+                    </>
                   )}
 
                   <button

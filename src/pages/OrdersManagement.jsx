@@ -1,13 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { db } from '../config/firebase';
-import { collection, getDocs, doc, updateDoc, query, orderBy } from 'firebase/firestore';
-import { TrendingDown, CheckCircle } from 'lucide-react';
+import { collection, getDocs, doc, updateDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
+import { TrendingDown, CheckCircle, Trash2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
+import { logAuditEvent } from '../services/auditService';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 import { SuccessAlert } from '../components/SuccessAlert';
 import { ErrorAlert } from '../components/ErrorAlert';
 
 export const OrdersManagement = () => {
+  const { user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [successMsg, setSuccessMsg] = useState('');
@@ -45,9 +48,40 @@ export const OrdersManagement = () => {
         status: newStatus,
       });
       setSuccessMsg('Order status updated');
+      await logAuditEvent({
+        actorId: user?.uid,
+        actorEmail: user?.email,
+        actionType: 'order.status_updated',
+        entityType: 'order',
+        entityId: orderId,
+        entityName: `Order ${orderId.slice(0, 8)}`,
+        details: `Status changed to ${newStatus}`,
+      });
       fetchOrders();
     } catch (error) {
       setErrorMsg('Failed to update order');
+      console.error(error);
+    }
+  };
+
+  const deleteOrder = async (orderId) => {
+    if (!window.confirm('Delete this order? This action cannot be undone.')) return;
+
+    try {
+      await deleteDoc(doc(db, 'orders', orderId));
+      setSuccessMsg('Order deleted successfully');
+      await logAuditEvent({
+        actorId: user?.uid,
+        actorEmail: user?.email,
+        actionType: 'order.deleted',
+        entityType: 'order',
+        entityId: orderId,
+        entityName: `Order ${orderId.slice(0, 8)}`,
+        details: 'Order deleted by admin',
+      });
+      fetchOrders();
+    } catch (error) {
+      setErrorMsg('Failed to delete order');
       console.error(error);
     }
   };
@@ -168,6 +202,13 @@ export const OrdersManagement = () => {
                       Mark Completed
                     </button>
                   )}
+                  <button
+                    onClick={() => deleteOrder(order.id)}
+                    className="flex-1 btn-secondary bg-red-100 text-red-700 hover:bg-red-200 flex items-center justify-center gap-2"
+                  >
+                    <Trash2 size={18} />
+                    Delete Order
+                  </button>
                 </div>
               </div>
             ))}

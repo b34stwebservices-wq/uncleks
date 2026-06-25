@@ -19,6 +19,8 @@ export const buildProductQuery = (collection, filters = {}) => {
     // Note: Firestore doesn't have full-text search, this is basic filtering
     // For production, consider Algolia or similar
     conditions.push(where('name', '>=', filters.search));
+    conditions.push(where('name', '<=', `${filters.search}\uf8ff`));
+    conditions.push(orderBy('name'));
   }
 
   conditions.push(orderBy('createdAt', 'desc'));

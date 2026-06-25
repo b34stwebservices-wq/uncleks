@@ -1,17 +1,23 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../config/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { ArrowLeft, CheckCircle } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { SuccessAlert } from '../components/SuccessAlert';
+import { createOrder } from '../services/orderService';
+import { logAuditEvent } from '../services/auditService';
 
 export const CheckoutPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { items, getTotalPrice, clearCart } = useCart();
-  const [customerName, setCustomerName] = useState('');
+  const [customerName, setCustomerName] = useState(() => user?.displayName || user?.email || '');
+  const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [phone, setPhone] = useState('');
+  const [orderId, setOrderId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -27,6 +33,21 @@ export const CheckoutPage = () => {
       return;
     }
 
+    if (!address.trim()) {
+      setErrorMsg('Please enter your address');
+      return;
+    }
+
+    if (!city.trim()) {
+      setErrorMsg('Please enter your city or town');
+      return;
+    }
+
+    if (!phone.trim()) {
+      setErrorMsg('Please enter your phone number');
+      return;
+    }
+
     if (items.length === 0) {
       setErrorMsg('Your cart is empty');
       return;
@@ -35,9 +56,13 @@ export const CheckoutPage = () => {
     setLoading(true);
 
     try {
-      // Create order
       const orderData = {
+        userId: user?.uid || null,
+        userEmail: user?.email || '',
         customer: customerName,
+        address,
+        city,
+        phone,
         items: items.map((item) => ({
           id: item.id,
           name: item.name,
@@ -46,20 +71,30 @@ export const CheckoutPage = () => {
         })),
         total: totalPrice,
         status: 'pending',
-        createdAt: serverTimestamp(),
+        createdAt: new Date(),
       };
 
-      await addDoc(collection(db, 'orders'), orderData);
+      const createdOrderId = await createOrder(orderData);
+      try {
+        await logAuditEvent({
+          actorId: user?.uid,
+          actorEmail: user?.email,
+          actionType: 'order.created',
+          entityType: 'order',
+          entityId: createdOrderId,
+          entityName: `Order ${createdOrderId.slice(0, 8)}`,
+          details: `Customer ${customerName} created an order for ZMK ${totalPrice.toFixed(2)}.`,
+        });
+      } catch (auditError) {
+        console.error('Failed to log audit event:', auditError);
+      }
 
+      setOrderId(createdOrderId);
       setSuccessMsg('Order placed successfully!');
       clearCart();
-
-      setTimeout(() => {
-        navigate('/store');
-      }, 2000);
     } catch (error) {
-      setErrorMsg('Failed to place order. Please try again.');
       console.error(error);
+      setErrorMsg('Failed to place order. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -78,6 +113,40 @@ export const CheckoutPage = () => {
           >
             Continue Shopping
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (items.length === 0 && successMsg) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="px-4 py-12 max-w-2xl mx-auto text-center">
+          <SuccessAlert message={successMsg} onDismiss={() => setSuccessMsg('')} />
+          <div className="card p-8 rounded-3xl shadow-sm border border-gray-200 mt-6">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">Thank you for your order</h1>
+            <p className="text-gray-600 mb-2">
+              Your order {orderId ? `#${orderId.slice(0, 8)}` : ''} is pending confirmation.
+            </p>
+            <p className="text-gray-600 mb-6">
+              We’ll update your order status soon. You can view your orders anytime from your order history.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-3">
+              <button
+                onClick={() => navigate('/my-orders')}
+                className="btn-primary w-full sm:w-auto"
+              >
+                View My Orders
+              </button>
+              <button
+                onClick={() => navigate('/store')}
+                className="btn-secondary w-full sm:w-auto"
+              >
+                Continue Shopping
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -151,6 +220,51 @@ export const CheckoutPage = () => {
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="John Doe"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 text-base"
+                  required
+                />
+              </div>
+
+              {/* Address */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Delivery Address *
+                </label>
+                <input
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="123 Main Street"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 text-base"
+                  required
+                />
+              </div>
+
+              {/* City */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  City / Town *
+                </label>
+                <input
+                  type="text"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="Lusaka"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 text-base"
+                  required
+                />
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Phone Number *
+                </label>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="+260 97 123 4567"
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-900 text-base"
                   required
                 />
