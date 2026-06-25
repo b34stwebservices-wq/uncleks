@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../context/useCart';
 import { X, Minus, Plus, ShoppingBag } from 'lucide-react';
-import { ErrorAlert } from '../components/ErrorAlert';
 
 export const CartModal = ({ isOpen, onClose }) => {
   const navigate = useNavigate();

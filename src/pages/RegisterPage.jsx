@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { ErrorAlert } from '../components/ErrorAlert';
 import Navbar from '../components/Navbar';
 import { getErrorMessage, validateEmail } from '../utils/helpers';
@@ -47,27 +47,6 @@ export const RegisterPage = () => {
 
     try {
       await register(cleanedEmail, password, cleanedFullName);
-      navigate('/pending');
-    } catch (err) {
-      setError(getErrorMessage(err));
-    } finally {
-      setLoading(false);
-    }
-
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      await register(email, password, fullName);
       navigate('/pending');
     } catch (err) {
       setError(getErrorMessage(err));

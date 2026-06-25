@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/useAuth';
+import { useCart } from '../context/useCart';
 import { ArrowLeft, CheckCircle } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { ErrorAlert } from '../components/ErrorAlert';

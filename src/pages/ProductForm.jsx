@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { db } from '../config/firebase';
 import { doc, collection, getDoc, setDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { ArrowLeft, Upload } from 'lucide-react';
@@ -123,6 +123,12 @@ export const ProductForm = () => {
       return;
     }
 
+    const price = parseFloat(formData.price);
+    if (!Number.isFinite(price) || price <= 0) {
+      setErrorMsg('Please enter a valid price greater than 0');
+      return;
+    }
+
     setSubmitting(true);
 
     try {
@@ -135,7 +141,7 @@ export const ProductForm = () => {
 
       const productData = {
         name: formData.name,
-        price: parseFloat(formData.price),
+        price,
         description: formData.description,
         image: imageUrl,
         updatedAt: serverTimestamp(),

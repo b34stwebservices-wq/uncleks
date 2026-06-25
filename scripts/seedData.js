@@ -16,7 +16,7 @@ async function loadEnv(filePath) {
         acc[key.trim()] = rest.join('=').trim();
         return acc;
       }, {});
-  } catch (error) {
+  } catch {
     return {};
   }
 }

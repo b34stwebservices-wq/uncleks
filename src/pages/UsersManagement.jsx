@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import { Users } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { logAuditEvent } from '../services/auditService';

@@ -4,7 +4,7 @@ import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { ShoppingCart } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { LoadingSpinner } from '../components/LoadingSpinner';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../context/useCart';
 import ErrorAlert from '../components/ErrorAlert';
 
 export const Storefront = ({ onShowCart }) => {

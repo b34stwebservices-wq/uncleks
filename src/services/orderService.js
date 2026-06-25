@@ -1,4 +1,4 @@
-import { collection, addDoc, query, where, orderBy, getDocs } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../config/firebase';
 
 const ordersCollection = collection(db, 'orders');

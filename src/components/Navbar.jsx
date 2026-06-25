@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, LogOut, ShoppingCart } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { useCart } from '../context/CartContext';
+import { useAuth } from '../context/useAuth';
+import { useCart } from '../context/useCart';
 import logo from '../assets/logo.png';
 
 export const Navbar = ({ showCart = false, onCartClick }) => {

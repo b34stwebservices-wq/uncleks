@@ -1,5 +1,3 @@
-import React from 'react';
-
 export const ErrorAlert = ({ message, onDismiss }) => {
   if (!message) return null;
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/useAuth';
 import Navbar from '../components/Navbar';
 import { getErrorMessage, validateEmail } from '../utils/helpers';
 import logo from '../assets/logo.png';
@@ -30,8 +30,8 @@ export const LoginPage = () => {
     setLoading(true);
 
     try {
-      const result = await login(email, password);
-      navigate('/store');
+      const { role } = await login(email, password);
+      navigate(role === 'admin' ? '/dashboard' : '/store');
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {

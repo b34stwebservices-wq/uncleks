@@ -8,7 +8,9 @@ async function loadServiceAccount(filePath) {
     const raw = await fs.readFile(filePath, 'utf8');
     return JSON.parse(raw);
   } catch (err) {
-    throw new Error(`Could not read service account file at ${filePath}: ${err.message}`);
+    throw new Error(`Could not read service account file at ${filePath}: ${err.message}`, {
+      cause: err,
+    });
   }
 }
 
@@ -127,7 +129,7 @@ async function ensureDemoUsers(admin, db, Timestamp) {
       try {
         userRecord = await auth.getUserByEmail(u.email);
         console.log(`User already exists: ${u.email}`);
-      } catch (err) {
+      } catch {
         // Create user if not found
         userRecord = await auth.createUser({
           email: u.email,
