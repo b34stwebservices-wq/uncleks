@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import ProtectedRoute from './routes/ProtectedRoute';
+import Footer from './components/Footer';
 
 // Pages
 import LandingPage from './pages/LandingPage';
@@ -19,6 +20,8 @@ import Storefront from './pages/Storefront';
 import CheckoutPage from './pages/CheckoutPage';
 import OrderHistory from './pages/OrderHistory';
 import NotFoundPage from './pages/NotFoundPage';
+import About from './pages/About';
+import Contact from './pages/Contact';
 
 // Components
 import CartModal from './components/CartModal';
@@ -27,7 +30,8 @@ function App() {
   const [cartOpen, setCartOpen] = useState(false);
 
   return (
-    <Router
+    <>
+      <Router
       future={{
         v7_startTransition: true,
         v7_relativeSplatPath: true,
@@ -38,6 +42,8 @@ function App() {
           <Routes>
             {/* Landing Page (unauthenticated) */}
             <Route path="/welcome" element={<LandingPage />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
 
             {/* Auth Routes */}
             <Route path="/login" element={<LoginPage />} />
@@ -134,6 +140,8 @@ function App() {
         </CartProvider>
       </AuthProvider>
     </Router>
+    <Footer />
+    </>
   );
 }
 

@@ -65,12 +65,25 @@ export const Navbar = ({ showCart = false, onCartClick }) => {
               </>
             ) : (
               <>
+                <Link to="/" className="hover:text-accent-light transition">
+                  Home
+                </Link>
+                <Link to="/store" className="hover:text-accent-light transition">
+                  Store
+                </Link>
+                <Link to="/about" className="hover:text-accent-light transition">
+                  About
+                </Link>
+                <Link to="/contact" className="hover:text-accent-light transition">
+                  Contact
+                </Link>
                 <Link to="/login" className="hover:text-accent-light transition">
                   Login
                 </Link>
                 <Link to="/register" className="px-3 py-1 rounded-md bg-white text-primary-900 font-medium hover:bg-gray-100 transition">
                   Register
                 </Link>
+                
               </>
             )}
           </div>
@@ -164,6 +177,34 @@ export const Navbar = ({ showCart = false, onCartClick }) => {
               ) : (
                 <>
                   <Link
+                    to="/"
+                    className="block py-2 hover:text-accent-light transition"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Home
+                  </Link>
+                  <Link
+                      to="/store"
+                      className="block py-2 hover:text-accent-light transition"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Store
+                    </Link>
+                  <Link
+                    to="/about"
+                    className="block py-2 hover:text-accent-light transition"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    About
+                  </Link>
+                  <Link
+                    to="/contact"
+                    className="block py-2 hover:text-accent-light transition"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Contact
+                  </Link>
+                  <Link
                     to="/login"
                     className="block py-2 hover:text-accent-light transition"
                     onClick={() => setMobileMenuOpen(false)}
@@ -178,13 +219,7 @@ export const Navbar = ({ showCart = false, onCartClick }) => {
                   >
                     Register
                   </Link>
-                  <Link
-                      to="/store"
-                      className="block py-2 hover:text-accent-light transition"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Store
-                    </Link>
+                  
                 </>
               )}
             </div>
