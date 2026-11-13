@@ -22,7 +22,7 @@ export const LandingPage = () => {
       <div
         className="px-4 py-16 sm:px-6 lg:px-8 bg-primary-800 text-white"
         style={{
-          backgroundImage: `url(${feature})`,
+          backgroundImage: `url('https://res.cloudinary.com/dkgmkegyq/image/upload/v1794233027/products/nnbc7xinavvg8bpq77fq.jpg')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
