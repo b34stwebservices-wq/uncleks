@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
 import Navbar from '../components/Navbar';
-import heroSpices from '';
+import heroSpices from '../assets/hero-spices.svg';
 import featureQuality from '../assets/logo.png';
 import featureShopping from '../assets/logo.png';
 import featureFast from '../assets/logo.png';
