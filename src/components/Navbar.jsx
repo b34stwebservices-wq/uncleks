@@ -23,7 +23,7 @@ export const Navbar = ({ showCart = false, onCartClick }) => {
         <div className="flex items-center justify-between h-16 px-4">
           {/* Logo */}
           <Link to={isAdmin ? '/dashboard' : '/'} className="flex items-center gap-2 font-bold text-lg sm:text-xl">
-            <img src={logo} alt="Uncle K's Logo" className="h-24 w-24" />
+            <img src={logo} alt="Uncle K's Logo" className="h-12 w-12" />
           </Link>
 
           {/* Desktop Navigation (hidden on mobile) */}
