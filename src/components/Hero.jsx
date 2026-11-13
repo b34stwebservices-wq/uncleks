@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
-import Navbar from 'https://res.cloudinary.com/dkgmkegyq/image/upload/v1794232930/products/eiokub0ta5dk5vmfjz5f.jpg';
-import heroSpices from '../assets/landingpage/3.png';
+import Navbar from '../components/Navbar.jsx';
+import heroSpices from 'https://res.cloudinary.com/dkgmkegyq/image/upload/v1794232930/products/eiokub0ta5dk5vmfjz5f.jpg';
 import featureQuality from '../assets/logo.png';
 import featureShopping from '../assets/logo.png';
 import featureFast from '../assets/logo.png';
