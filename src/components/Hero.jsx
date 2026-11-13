@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
 import Navbar from '../components/Navbar';
-import heroSpices from 'https://res.cloudinary.com/dkgmkegyq/image/upload/v1794232930/products/eiokub0ta5dk5vmfjz5f.jpg';
+import heroSpices from '';
 import featureQuality from '../assets/logo.png';
 import featureShopping from '../assets/logo.png';
 import featureFast from '../assets/logo.png';
@@ -34,7 +34,7 @@ function Hero() {
                     </div>
                 </div>
                 <div>
-                    <img src={heroSpices} alt="Premium Spices" className="w-full max-w-md mx-auto rounded-lg shadow-lg" />
+                    <img src='https://res.cloudinary.com/dkgmkegyq/image/upload/v1794232930/products/eiokub0ta5dk5vmfjz5f.jpg'alt="Premium Spices" className="w-full max-w-md mx-auto rounded-lg shadow-lg" />
                 </div>
           </div>
         </div>
